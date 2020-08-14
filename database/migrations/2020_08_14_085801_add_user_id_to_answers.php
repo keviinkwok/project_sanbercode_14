@@ -14,7 +14,10 @@ class AddUserIdToAnswers extends Migration
     public function up()
     {
         Schema::table('answers', function (Blueprint $table) {
-            //
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('question_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('question_id')->references('id')->on('questions');
         });
     }
 
@@ -26,7 +29,10 @@ class AddUserIdToAnswers extends Migration
     public function down()
     {
         Schema::table('answers', function (Blueprint $table) {
-            //
+            $table->dropForeign(['question_id']);
+            $table->dropForeign(['user_id']);
+            $table->dropColumn(['question_id']);
+            $table->dropColumn(['user_id']);
         });
     }
 }
