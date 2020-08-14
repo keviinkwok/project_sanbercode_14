@@ -12,11 +12,9 @@
 */
 
 Route::get('/', 'IndexController@index');
-
-Auth::routes();
-
 Route::resource('question','QuestionController');
-
+Route::resource('answer','AnswerController');
+Auth::routes();
 Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
     \UniSharp\LaravelFilemanager\Lfm::routes();
 });

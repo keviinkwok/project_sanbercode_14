@@ -17,7 +17,7 @@ class AddUserIdToAnswers extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('question_id');
             $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('question_id')->references('id')->on('questions');
+            $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
         });
     }
 

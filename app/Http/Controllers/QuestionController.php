@@ -20,7 +20,7 @@ class QuestionController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     public function index()
     {
         $questions = Auth::user()->questions;
@@ -77,8 +77,7 @@ class QuestionController extends Controller
     public function show($id)
     {
         $question = Question::find($id);
-        $answer = Answer::where("question_id",$id)->get();
-        return view('question/detail-question', compact('question','answer'));
+        return view('question/detail-question', compact('question'));
     }
 
     /**

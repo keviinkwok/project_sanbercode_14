@@ -13,6 +13,10 @@ class Question extends Model
         return $this->belongsTo('App\User','user_id');
     }
 
+    public function answer(){
+        return $this->hasMany('App\Answer');
+    }
+
     public function tags(){
         return $this->belongstoMany('App\Tag','question_tags','question_id','tag_id');
     }

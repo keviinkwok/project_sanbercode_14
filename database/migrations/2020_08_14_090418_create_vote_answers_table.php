@@ -17,8 +17,8 @@ class CreateVoteAnswersTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('answer_id');
             $table->integer('poin', 11);
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->foreign('answer_id')->references('id')->on('answers');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('answer_id')->references('id')->on('answers')->onDelete('cascade');
             $table->timestamps();
         });
     }
