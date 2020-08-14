@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('foto')->nullable();
-            $table->integer('reputasi');
+            $table->integer('reputasi')->nullable();
             $table->timestamps();
         });
     }
