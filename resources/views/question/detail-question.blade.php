@@ -21,11 +21,13 @@
                         <div class="float-left">
                             <strong>Question Details</strong>
                         </div>
-                        <div class="float-right">
-                            <a href="{{ url('question') }}" class="btn btn-danger btn-sm">
-                                Back
-                            </a>
-                        </div>
+                        @if ($question->author->name == Auth::user()->name)
+                            <div class="float-right">
+                                <a href="{{ url('question') }}" class="btn btn-danger btn-sm">
+                                    Back
+                                </a>
+                            </div>
+                        @endif
                     </div>
                     <div class="card-body table-responsive">
 
@@ -51,11 +53,33 @@
                             <strong>Answers</strong>
                         </div>
                     </div>
-
                     {{-- Looping card-body --}}
                     @foreach ($question->answer as $item)
                         <div class="card-body">
                             <p>{!! $item->isi !!}</p>
+
+                            @if ($item->user_id == Auth::id())
+                                <div class="float-left">
+
+                                    <form action="{{ url('answer/' . $item->id . '/edit') }}" class='d-inline'>
+                                        <input type="hidden" name="id" value="{{ $question->id }}">
+                                        <button class="btn btn-warning btn-sm">
+                                            Edit
+                                        </button>
+                                    </form>
+                                    
+                                    <form action="{{ url('answer/' . $item->id) }}" method='POST' class='d-inline'
+                                        onsubmit="return confirm('Are you sure to Delete this Question ?')">
+                                        @method('delete')
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $question->id }}">
+                                        <button class="btn btn-danger btn-sm">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+
                             <div class="float-right">
                                 {{ $item->author->name }}
                             </div>
@@ -78,8 +102,8 @@
                                 <input type="hidden" name="id" value="{{ $question->id }}">
                                 <div class="form-group">
                                     <textarea name="isi" class="form-control my-editor">
-                                                                {!!  old('isi', '') !!}
-                                                            </textarea>
+                                        {!!  old('isi', '') !!}
+                                    </textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Post your answer</button>
                             </form>

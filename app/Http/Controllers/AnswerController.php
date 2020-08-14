@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Answer;
+use App\Question;
 
 class AnswerController extends Controller
 {
@@ -48,7 +49,6 @@ class AnswerController extends Controller
             ]
         );
         return redirect()->action('QuestionController@show', ['question' => $request->id]);
-        // return redirect('/')->with('status', 'Answer added successfully!');
     }
 
     /**
@@ -68,9 +68,12 @@ class AnswerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
-        //
+    public function edit(Request $request , $id)
+    {           
+        $answer = Answer::find($id);
+        $question = Question::find($request->id);
+        // dd($answer);
+        return view('answer/edit-answer', compact('answer','question'));
     }
 
     /**
@@ -82,7 +85,17 @@ class AnswerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validatedData = $request->validate([
+            'isi' => 'required'
+        ]);
+
+        // dd($request->id);
+        $insert = Auth::user()->answers()->where('id',$id)->update(
+            [
+                'isi' => $request->isi
+            ]
+        );
+        return redirect()->action('QuestionController@show', ['question' => $request->id]);
     }
 
     /**
@@ -91,8 +104,10 @@ class AnswerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        //
+        Answer::destroy($id);
+
+        return redirect()->action('QuestionController@show', ['question' => $request->id]);
     }
 }

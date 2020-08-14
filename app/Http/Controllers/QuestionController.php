@@ -120,8 +120,7 @@ class QuestionController extends Controller
             $tag_id[] = $tag->id;
         }
 
-        $user = Auth::user();
-        $edit = $user->questions()->where('id',$id)->update(
+        $edit = Auth::user()->questions()->where('id',$id)->update(
                     [
                         'judul' => $request->judul,
                         'isi' => $request->isi

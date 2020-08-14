@@ -5,7 +5,7 @@
 @endpush
 
 @section('content')
-<div class="content mt-3">
+<div class="col-md-6 offset-md-3 content mt-3">
     <div class="animated fadeIn">
         <div class="card">
             <div class="card-header">
