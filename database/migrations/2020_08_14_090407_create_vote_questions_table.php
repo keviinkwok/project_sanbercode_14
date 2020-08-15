@@ -14,9 +14,10 @@ class CreateVoteQuestionsTable extends Migration
     public function up()
     {
         Schema::create('vote_questions', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('question_id');
-            $table->integer('poin', 11);
+            $table->integer('poin');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
             $table->timestamps();

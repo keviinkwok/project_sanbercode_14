@@ -107,6 +107,30 @@ class AnswerController extends Controller
     public function destroy(Request $request, $id)
     {
         Answer::destroy($id);
+        return redirect()->action('QuestionController@show', ['question' => $request->id]);
+    }
+
+    public function correctAns(Request $request,$id)
+    {
+        $check = Question::find($request->id)->where('correct_answer_id','=', $id)->first();
+        // dd($check);
+        Auth::user()->questions()->where('id','=',$request->id)->update(
+            [
+                'correct_answer_id' => $id
+            ]
+        );
+
+        $user = Auth::user()->where('id','=',$request->user_id)->first();
+        // dd($user);
+        $reputasi = $user->reputasi;
+        if($reputasi == ''){
+            $reputasi = 0;
+        }
+        $reputasi = $reputasi + 15;
+
+        Auth::user()->where('id','=',$request->user_id)->update([
+            'reputasi' => $reputasi
+        ]);
 
         return redirect()->action('QuestionController@show', ['question' => $request->id]);
     }

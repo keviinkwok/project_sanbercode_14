@@ -20,4 +20,16 @@ class Question extends Model
     public function tags(){
         return $this->belongstoMany('App\Tag','question_tags','question_id','tag_id');
     }
+
+    public function voteQuestions(){
+        return $this->hasMany('App\VoteQuestions');
+    }
+
+    public function voteAnswers(){
+        return $this->hasMany('App\VoteAnswers');
+    }
+
+    public function correctAnswer(){
+        return $this->belongsTo('App\Answer');
+    }
 }

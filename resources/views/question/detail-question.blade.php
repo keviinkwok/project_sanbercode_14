@@ -35,16 +35,50 @@
                         <h5>Author : {{ $question->author->name }}</h5>
                         <p>{!! $question->isi !!}</p>
                         <div>
-                            Tags :
-                            @foreach ($question->tags as $tag)
-                                <button class="btn btn-primary btn-sm">
-                                    {{ $tag->tag }}
-                                </button>
-                            @endforeach
+                            <div class="float-left">
+                                Tags :
+                                @foreach ($question->tags as $tag)
+                                    <button class="btn btn-primary btn-sm">
+                                        {{ $tag->tag }}
+                                    </button>
+                                @endforeach
+                            </div>
+                            @if ($question->user_id != Auth::id())
+                            
+                                <div class="float-right">
+                                    {{-- upVote --}}
+                                    <form action="{{ url('upVoteQue') }}" method="POST" class='d-inline'>
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $question->id }}">
+                                        <input type="hidden" name="user_id" value="{{ $question->author->id }}">
+                                        <button class="btn btn-white btn-lg">
+                                            <i class="fa fa-thumbs-up"></i>
+                                        </button>
+                                    </form>
+
+                                    <label for="point"> {{ $question->voteQuestions->sum('poin') }} </label>
+
+                                    {{-- downVote --}}
+                                    @if (Auth::user()->reputasi >= 15)
+                                        <form action="{{ url('downVoteQue') }}" method="POST" class='d-inline'>
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $question->id }}">
+                                            <input type="hidden" name="user_id" value="{{ $question->author->id }}">
+                                            <button class="btn btn-white btn-lg">
+                                                <i class="fa fa-thumbs-down"></i>
+                                            </button>
+                                        </form>
+                                    @else
+                                        <button class="btn btn-white btn-lg" disabled>
+                                            <i class="fa fa-thumbs-down"></i>
+                                        </button>
+                                    @endif
+
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
-
 
                 {{-- Answer Location --}}
                 <div class="card">
@@ -53,21 +87,92 @@
                             <strong>Answers</strong>
                         </div>
                     </div>
+
                     {{-- Looping card-body --}}
                     @foreach ($question->answer as $item)
                         <div class="card-body">
+                            
+                            @if ($item->correctAnswer != '')
+                                <div> 
+                                    <i class="fa fa-trophy bg"></i>  
+                                    Jawaban Terbaik 
+                                    <i class="fa fa-trophy"></i>
+                                </div>
+                            @endif
+
+                            {{-- Button Vote Jawaban --}}
+                            @if ($item->user_id != Auth::id())
+                                <div class="float-right">
+
+                                    {{-- upVote --}}
+                                    {{-- @if ()
+                                        
+                                    @endif --}}
+                                    <form action="{{ url('upVoteAns/' . $question->id) }}" method="POST" class='d-inline'>
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $item->id }}">
+                                        <input type="hidden" name="user_id" value="{{ $item->author->id }}">
+                                        <button class="btn btn-white btn-lg">
+                                            <i class="fa fa-thumbs-up"></i>
+                                        </button>
+                                    </form>
+
+                                    <label for="point"> {{ $item->voteAnswers->sum('poin') }} </label>
+
+                                    {{-- downVote --}}
+                                    @if (Auth::user()->reputasi >= 15)
+                                        <form action="{{ url('downVoteAns/' . $question->id) }}" method="POST"
+                                            class='d-inline'>
+                                            @csrf
+                                            <input type="hidden" name="id" value="{{ $item->id }}">
+                                            <input type="hidden" name="user_id" value="{{ $item->author->id }}">
+                                            <button class="btn btn-white btn-lg">
+                                                <i class="fa fa-thumbs-down"></i>
+                                            </button>
+                                        </form>
+
+                                    @else
+                                        <button class="btn btn-white btn-lg" disabled>
+                                            <i class="fa fa-thumbs-down"></i>
+                                        </button>
+                                    @endif
+
+                                </div>
+                            @else
+                                <div class="float-right">
+                                    <form action="{{ url('upVoteAns/' . $question->id) }}" method="POST" class='d-inline'>
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $item->id }}">
+                                        <button class="btn btn-white btn-lg" disabled>
+                                            <i class="fa fa-thumbs-up"></i>
+                                        </button>
+                                    </form>
+
+                                    <label for="point"> {{ $item->voteAnswers->sum('poin') }} </label>
+
+                                    <form action="{{ url('downVoteAns/' . $question->id) }}" method="POST" class='d-inline'>
+                                        @csrf
+                                        <input type="hidden" name="id" value="{{ $item->id }}">
+                                        <button class="btn btn-white btn-lg" disabled>
+                                            <i class="fa fa-thumbs-down"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            @endif
+
+                            {{-- isi Jawaban --}}
                             <p>{!! $item->isi !!}</p>
 
+                            {{-- Button Edit dan Update Jawaban--}}
                             @if ($item->user_id == Auth::id())
                                 <div class="float-left">
-
                                     <form action="{{ url('answer/' . $item->id . '/edit') }}" class='d-inline'>
                                         <input type="hidden" name="id" value="{{ $question->id }}">
                                         <button class="btn btn-warning btn-sm">
                                             Edit
                                         </button>
                                     </form>
-                                    
+
                                     <form action="{{ url('answer/' . $item->id) }}" method='POST' class='d-inline'
                                         onsubmit="return confirm('Are you sure to Delete this Question ?')">
                                         @method('delete')
@@ -78,6 +183,17 @@
                                         </button>
                                     </form>
                                 </div>
+
+                            @elseif ($question->user_id == Auth::id() && $item->correctAnswer == '' )
+                                {{-- Button Jawaban Terbaik --}}
+                                <form action="{{ url('correctAnswer/' . $item->id) }}" method='POST' class='d-inline'>
+                                    @csrf
+                                    <input type="hidden" name="id" value="{{ $question->id }}">
+                                    <input type="hidden" name="user_id" value="{{ $item->author->id }}">
+                                    <button class="btn btn-success btn-sm float-left">
+                                        Jadikan Jawaban Terbaik
+                                    </button>
+                                </form>
                             @endif
 
                             <div class="float-right">
@@ -102,8 +218,8 @@
                                 <input type="hidden" name="id" value="{{ $question->id }}">
                                 <div class="form-group">
                                     <textarea name="isi" class="form-control my-editor">
-                                        {!!  old('isi', '') !!}
-                                    </textarea>
+                                                                                                {!!  old('isi', '') !!}
+                                                                                            </textarea>
                                 </div>
                                 <button type="submit" class="btn btn-primary">Post your answer</button>
                             </form>
@@ -153,7 +269,6 @@
         };
 
         tinymce.init(editor_config);
-
     </script>
 
 @endpush

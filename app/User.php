@@ -48,4 +48,12 @@ class User extends Authenticatable
     public function answers(){
         return $this->hasMany('App\Answer'); 
     }
+
+    public function voteQuestions(){
+        return $this->hasMany('App\VoteQuestions');
+    }
+
+    public function voteAnswers(){
+        return $this->hasMany('App\VoteAnswers');
+    }
 }

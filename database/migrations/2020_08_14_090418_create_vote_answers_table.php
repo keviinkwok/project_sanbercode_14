@@ -14,9 +14,10 @@ class CreateVoteAnswersTable extends Migration
     public function up()
     {
         Schema::create('vote_answers', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('answer_id');
-            $table->integer('poin', 11);
+            $table->integer('poin');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('answer_id')->references('id')->on('answers')->onDelete('cascade');
             $table->timestamps();
