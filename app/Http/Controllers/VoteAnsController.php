@@ -8,15 +8,18 @@ use App\Answer;
 
 class VoteAnsController extends Controller
 {
+    //Mengamankan Route
     public function __construct()
     {
         $this->middleware('auth');
     }
 
+    //Fungsi Melakukan UP VOTE
     public function upVote(Request $request,$id)
-    {
+    {   
+        //Mengecek data vote apakah sudah ada di DB atau belum
         $check = Answer::find($request->id)->voteAnswers()->where('user_id','=', Auth::id())->first();
-        // dd($check);
+        // Jika belum ada INSERT
         if($check == ''){
             Auth::user()->voteAnswers()->create(
                 [
@@ -24,6 +27,7 @@ class VoteAnsController extends Controller
                     'poin' => 1
                 ]
             );
+        //Jika sudah ada UPDATE
         }else{
             Auth::user()->voteAnswers()->where('answer_id','=',$request->id)->update(
                 [
@@ -32,6 +36,7 @@ class VoteAnsController extends Controller
             );
         }
 
+        //Mengecek data reputasi
         $user = Auth::user()->where('id','=',$request->user_id)->first();
         $reputasi = $user->reputasi;
         if($reputasi == ''){
@@ -39,7 +44,7 @@ class VoteAnsController extends Controller
         }
         $reputasi = $reputasi + 10;
 
-        // dd($reputasi);
+        // Menambahkan Reputasi ke User
         Auth::user()->where('id','=',$request->user_id)->update([
             'reputasi' => $reputasi
         ]);
@@ -49,8 +54,9 @@ class VoteAnsController extends Controller
 
     public function downVote(Request $request,$id)
     {
+        //Mengecek data vote apakah sudah ada di DB atau belum
         $check = Answer::find($request->id)->voteAnswers()->where('user_id','=', Auth::id())->first();
-        // dd($check);
+        // Jika belum ada INSERT
         if($check == ''){
             Auth::user()->voteAnswers()->create(
                 [
@@ -58,6 +64,7 @@ class VoteAnsController extends Controller
                     'poin' => -1
                 ]
             );
+        //Jika sudah ada UPDATE
         }else{
             Auth::user()->voteAnswers()->where('answer_id','=',$request->id)->update(
                 [
@@ -66,6 +73,7 @@ class VoteAnsController extends Controller
             );
         }
 
+        //Mengecek data reputasi
         $user = Auth::user()->where('id','=',$request->user_id)->first();
         $reputasi = $user->reputasi;
         if($reputasi == ''){
@@ -73,7 +81,7 @@ class VoteAnsController extends Controller
         }
         $reputasi = $reputasi - 1;
 
-        // dd($reputasi);
+        // Menambahkan Reputasi ke User
         Auth::user()->where('id','=',$request->user_id)->update([
             'reputasi' => $reputasi
         ]);

@@ -16,11 +16,13 @@ class QuestionController extends Controller
      * @return \Illuminate\Http\Response
      */
 
+    //Mengamankan Route
     public function __construct()
     {
         $this->middleware('auth');
     }
 
+    //Menampilkan data My Question
     public function index()
     {
         $questions = Auth::user()->questions;
@@ -32,6 +34,8 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    //Menampilkan form CREATE QUESTION
     public function create()
     {
         return view('question/create-question');
@@ -43,6 +47,8 @@ class QuestionController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+
+    //Menyimpan data QUESTION
     public function store(Request $request)
     {
         $validatedData = $request->validate([
@@ -74,6 +80,8 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    //Menampilkan DETAIL QUESTION
     public function show($id)
     {
         $question = Question::find($id);
@@ -86,6 +94,8 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    //Menampilkan FORM EDIT
     public function edit($id)
     {
         $question = Question::find($id);
@@ -104,6 +114,8 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    
+    //Menghapus data QUESTION
     public function update(Request $request, $id)
     {
         $validatedData = $request->validate([
@@ -111,8 +123,10 @@ class QuestionController extends Controller
             'isi' => 'required'
         ]);
 
+        //Memutuskan Relasi Tag (Hapus)
         Question::find($id)->tags()->detach();
         
+        //Mengambil Tag Baru
         $tags_arr = explode(',',$request->tags);
         $tag_id = [];
         foreach($tags_arr as $tag_name){
@@ -120,13 +134,15 @@ class QuestionController extends Controller
             $tag_id[] = $tag->id;
         }
 
+        //Update Data
         $edit = Auth::user()->questions()->where('id',$id)->update(
                     [
                         'judul' => $request->judul,
                         'isi' => $request->isi
                     ]
                 );
-                
+        
+        //Mengisi data TAG baru
         Question::find($id)->tags()->attach($tag_id);
 
         return redirect('question')->with('status', 'Question updated successfully!');
@@ -138,6 +154,8 @@ class QuestionController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    //Menghapus data QUESTION
     public function destroy($id)
     {
         Question::destroy($id);

@@ -7,6 +7,7 @@ use App\Question;
 
 class IndexController extends Controller
 {
+    //Menampilkan seleuruh data QUESTION
     public function index()
     {   
         $question = Question::all();

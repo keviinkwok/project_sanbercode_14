@@ -41,7 +41,6 @@ class AnswerController extends Controller
             'isi' => 'required'
         ]);
 
-        // dd($request->id);
         $insert = Auth::user()->answers()->create(
             [
                 'isi' => $request->isi,
@@ -72,7 +71,6 @@ class AnswerController extends Controller
     {           
         $answer = Answer::find($id);
         $question = Question::find($request->id);
-        // dd($answer);
         return view('answer/edit-answer', compact('answer','question'));
     }
 
@@ -89,7 +87,6 @@ class AnswerController extends Controller
             'isi' => 'required'
         ]);
 
-        // dd($request->id);
         $insert = Auth::user()->answers()->where('id',$id)->update(
             [
                 'isi' => $request->isi
@@ -112,16 +109,16 @@ class AnswerController extends Controller
 
     public function correctAns(Request $request,$id)
     {
-        $check = Question::find($request->id)->where('correct_answer_id','=', $id)->first();
-        // dd($check);
+        //Update CORRECT ANSWER
         Auth::user()->questions()->where('id','=',$request->id)->update(
             [
                 'correct_answer_id' => $id
             ]
         );
 
+
+        //Menambahkan Reputasi
         $user = Auth::user()->where('id','=',$request->user_id)->first();
-        // dd($user);
         $reputasi = $user->reputasi;
         if($reputasi == ''){
             $reputasi = 0;
